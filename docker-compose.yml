@@ -1,0 +1,14 @@
+version: "2.1"
+services:
+  aggregator-mock:
+    image: nginx:1.20.2
+    container_name: aggregator-mock
+    restart: on-failure
+    ports:
+      - "8443:8443"
+    environment:
+      NGINX_HOST: localhost
+      SSL_CIPHERS_SUPPORTED: ECDHE-ECDSA-AES128-CCM8:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-ECDSA-DES-CBC3-SHA
+    volumes:
+      - "./certs:/certs"
+      - "./conf/:/etc/nginx/templates/"

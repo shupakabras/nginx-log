@@ -1,0 +1,33 @@
+#Request payload log configuration
+log_format payloadlog '"$request" $request_body';
+
+server {
+  listen       8443 ssl;
+  server_name  ${NGINX_HOST};
+
+  #Server certificates (public and private) in a pem format
+  ssl_certificate           /certs/server.crt;
+  ssl_certificate_key       /certs/server.key;
+  #Enable preferred server ciphers
+  ssl_prefer_server_ciphers on;
+  #colon-separated list of ciphers which server should support
+  ssl_ciphers               ${SSL_CIPHERS_SUPPORTED};
+  ssl_protocols             TLSv1.2 TLSv1.3;
+  #enable client verification by certificate
+  ssl_verify_client         on;
+  #use this CA certificate to verify client certificate
+  ssl_client_certificate    /certs/ca.crt;
+  ssl_verify_depth          4;
+
+  #log all requests with payload to standart output
+  access_log /dev/stdout payloadlog;
+  #increate default request body buffer (so we could log request with payload up to defined size)
+  client_body_buffer_size 1024K;
+
+
+  location / {
+    access_log /dev/stdout payloadlog;
+    proxy_pass http://127.0.0.1:8181/redirection;
+  }
+
+}
